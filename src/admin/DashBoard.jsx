@@ -1,102 +1,71 @@
-// DashBoard.jsx
-import { useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import  { useState } from "react";
 
 const DashBoard = () => {
+  const [polls, setPolls] = useState(() => {
+    return JSON.parse(localStorage.getItem("polls")) || [];
+  });
   const [pollTitle, setPollTitle] = useState("");
-  const [pollOptions, setPollOptions] = useState(["", ""]);
+  const [contestants, setContestants] = useState([]);
+  const [contestantName, setContestantName] = useState("");
 
-  const handlePollTitleChange = (e) => setPollTitle(e.target.value);
-
-  const handlePollOptionChange = (index, e) => {
-    const newOptions = [...pollOptions];
-    newOptions[index] = e.target.value;
-    setPollOptions(newOptions);
+  const handleAddContestant = () => {
+    if (contestantName.trim() === "") return;
+    setContestants([...contestants, { name: contestantName }]);
+    setContestantName("");
   };
 
   const handleSubmitPoll = () => {
-    const newPoll = { title: pollTitle, options: pollOptions };
-    // Store the poll (in localStorage for now)
-    const existingPolls = JSON.parse(localStorage.getItem("polls")) || [];
-    localStorage.setItem("polls", JSON.stringify([...existingPolls, newPoll]));
+    if (!pollTitle || contestants.length === 0) return alert("Fill all fields!");
+    const newPoll = { title: pollTitle, contestants };
+    const updatedPolls = [...polls, newPoll];
+    setPolls(updatedPolls);
+    localStorage.setItem("polls", JSON.stringify(updatedPolls));
     setPollTitle("");
-    setPollOptions(["", ""]);
+    setContestants([]);
+    alert("Poll created successfully!");
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <Header />
-      <main className="p-8">
-        <h1 className="text-3xl font-semibold text-gray-800">Admin Dashboard</h1>
-        <div className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-800">Manage Elections</h2>
-              <p className="mt-2 text-gray-600">Create, edit, or delete elections.</p>
-              <a
-                href="/admin/manage-elections"
-                className="text-blue-600 hover:text-blue-800 mt-4 inline-block"
-              >
-                Go to Elections
-              </a>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-800">View Results</h2>
-              <p className="mt-2 text-gray-600">Check the real-time voting results.</p>
-              <a
-                href="/admin/results"
-                className="text-blue-600 hover:text-blue-800 mt-4 inline-block"
-              >
-                Go to Results
-              </a>
-            </div>
-          </div>
-
-          {/* Create Election Form */}
-          <div className="mt-8">
-            <h3 className="text-xl font-semibold text-gray-800">Create Election Poll</h3>
-            <form>
-              <div>
-                <label className="block text-gray-600">Poll Title</label>
-                <input
-                  type="text"
-                  value={pollTitle}
-                  onChange={handlePollTitleChange}
-                  className="mt-2 p-2 w-full border rounded"
-                  placeholder="Enter election title"
-                  required
-                />
-              </div>
-
-              {pollOptions.map((option, index) => (
-                <div key={index} className="mt-4">
-                  <label className="block text-gray-600">Option {index + 1}</label>
-                  <input
-                    type="text"
-                    value={option}
-                    onChange={(e) => handlePollOptionChange(index, e)}
-                    className="mt-2 p-2 w-full border rounded"
-                    placeholder={`Option ${index + 1}`}
-                    required
-                  />
-                </div>
-              ))}
-
-              <div className="mt-4">
-                <button
-                  type="button"
-                  onClick={handleSubmitPoll}
-                  className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700"
-                >
-                  Create Poll
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </main>
-      <Footer />
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Create a Poll</h2>
+      <input
+        type="text"
+        value={pollTitle}
+        onChange={(e) => setPollTitle(e.target.value)}
+        placeholder="Poll Title"
+        className="border rounded p-2 w-full mb-4"
+      />
+      <div className="mb-4">
+        <input
+          type="text"
+          value={contestantName}
+          onChange={(e) => setContestantName(e.target.value)}
+          placeholder="Contestant Name"
+          className="border rounded p-2 w-2/3"
+        />
+        <button
+          onClick={handleAddContestant}
+          className="ml-2 bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Add Contestant
+        </button>
+      </div>
+      <div className="mb-4">
+        <h3 className="font-semibold">Contestants:</h3>
+        <ul>
+          {contestants.map((contestant, index) => (
+            <li key={index} className="text-gray-700">
+              {contestant.name}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <button
+        onClick={handleSubmitPoll}
+        className="bg-green-500 text-white px-6 py-2 rounded"
+      >
+        Submit Poll
+      </button>
     </div>
   );
 };
