@@ -14,7 +14,12 @@ const LoginPage = () => {
     // Simple validation for demonstration purposes
     if (email === "admin@example.com" && password === "password") {
       navigate("/admin");  // Navigate to the admin dashboard on successful login
-    } else {
+    } 
+    //validation for a voter
+    else if (email === "voter@example.com" && password === "voterpassword"){
+        navigate("/voting");
+    }
+    else {
       setError("Invalid login credentials.");
     }
   };
