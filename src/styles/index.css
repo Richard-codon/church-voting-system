@@ -4,11 +4,13 @@
 
 
 /* src/styles/index.css */
+/* index.css or global stylesheet */
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
   
   footer {
     position: relative;
